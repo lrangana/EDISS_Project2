@@ -448,17 +448,17 @@ app.post('/viewProducts', function (req, res) {
 		if(!asin) {
 		connection.query('SELECT asin,productName FROM products WHERE (productName like ? or productDescription like ?) and groups like ?',[filkeyword,filkeyword,filgroups],function(error,results,fields){
 		if(error || results.length <= 0){
-			return res.send({message: 'There are no products that match that criteria'});
+			return res.json({message: 'There are no products that match that criteria'});
 		}
-		return res.send({product: results});
+		return res.json({product: results});
 		});	
 	}
 	if(asin) {
 		connection.query('SELECT asin,productName FROM products WHERE asin=?',[filasin],function(error,results,fields){
 		if(error || results.length <= 0){
-			return res.send({message: 'There are no products that match that criteria'});
+			return res.json({message: 'There are no products that match that criteria'});
 		}
-		return res.send({product: results});
+		return res.json({product: results});
 		});
 	}
 });
