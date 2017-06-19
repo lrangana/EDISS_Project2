@@ -10,7 +10,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-var port     = process.env.PORT || 8080;
+var port     = process.env.PORT || 8000;
 var mysql = require('mysql');
 
 
@@ -35,11 +35,11 @@ app.use(bodyParser()); // get information from html forms
 //MYSQL DB CONFIG
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
   port	   : '3306',
   user     : 'root',
-  password : 'lavanya',
-  database : 'edis'
+  password : 'lavanyar',
+  database : 'Project1_DB'
 });
 
 
