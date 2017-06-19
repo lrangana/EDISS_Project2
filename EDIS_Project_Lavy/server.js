@@ -1,4 +1,4 @@
-// server.js
+// server.js  //upload //lavy
 
 // setting up & getting all the tools we need
 var express  = require('express');
@@ -10,7 +10,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-var port     = process.env.PORT || 8080;
+var port     = process.env.PORT || 7000;
 var mysql = require('mysql');
 
 
@@ -35,11 +35,11 @@ app.use(bodyParser()); // get information from html forms
 //MYSQL DB CONFIG
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
   port	   : '3306',
   user     : 'root',
-  password : 'lavanya',
-  database : 'edis'
+  password : 'lavanyar',
+  database : 'Project1_DB'
 });
 
 
@@ -68,7 +68,7 @@ app.post('/registerUser', function (req, res) {
         }
 		
 		if(!req.body.fname || !req.body.lname || !req.body.address || !req.body.city || !req.body.state || !req.body.zip ||  !req.body.email || !req.body.username || !req.body.password){
-		res.send({
+		res.json({
        "message":"The input you provided is not valid"});
 		}
 		else{
@@ -76,20 +76,21 @@ app.post('/registerUser', function (req, res) {
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
 		if(err){
 		//console.log("error ocurred",error);
-		res.send({
+		res.json({
       "failed":"error ocurred"
     })
 		}
 		
 		if(!rows.length){
-			var msg = req.body.fname + " was registered successfully"; 
+			//var msg = req.body.fname + " was registered successfully"; 
 	connection.query('INSERT INTO users SET ?',users, function (error, results) {
-    res.send({
-       "message ":msg });
+		//console.log(req.body.fname + " was registered successfully");
+    res.json({
+       "message":req.body.fname + " was registered successfully" });
   });	
 }
 else{
-	res.send({
+	res.json({
        "message":"The input you provided is not valid"});
 }
 	});
@@ -162,7 +163,7 @@ var fusername = req.session.user;
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
 		if(err){
 		//console.log("error ocurred",error);
-		res.send({
+		res.json({
       "failed":"error ocurred"
     })
 		}
@@ -171,7 +172,7 @@ var fusername = req.session.user;
 			ousername=username;
 }
 else{
-	res.send({
+	res.json({
        "message":"The input you provided is not valid"});
 }
 	});
@@ -210,12 +211,12 @@ else{
 	   
 	   connection.query('UPDATE users SET fname=?,lname=?,address=?,city=?,state=?,zip=?,email=?,username=?,password=? where username=?',[ofname,olname,oaddress,ocity,ostate,ozip,oemail,ousername,opassword,fusername], function (error, results) {
 		   if (error) {
-		res.send({
+		res.json({
       "failed":"error ocurred"}); }
 		
 		else{
 				var msg = ofname + " your information was successfully updated";
-		res.send({
+		res.json({
 			"success":msg });
 			}
 	   });//2nd con query
@@ -242,7 +243,7 @@ app.post('/addProducts', function (req,res) {
 	   groups: req.body.group
         }
 			if(!req.body.asin || !req.body.productName || !req.body.productDescription || !req.body.group || req.body.asin.trim().length==0 || req.body.productName.trim().length==0 ||  req.body.productDescription.trim().length==0 || req.body.group.trim().length==0){
-		res.send({
+		res.json({
        "message":"The input you provided is not valid"});
 		}
 			else{
@@ -250,27 +251,27 @@ app.post('/addProducts', function (req,res) {
 	connection.query('SELECT * FROM products where asin=?', asin,function(err,rows){
 		//console.log(rows.length)
 		if(err){
-		res.send({
+		res.json({
       "failed":"error ocurred"})
 		}
 		if(!rows.length){
 	connection.query('INSERT INTO products SET ?',products, function (error, results) {
-		var msg = req.body.productName + " was successfully added to the system"
-    res.send({
-      "message ":msg});
+	//	var msg = req.body.productName + " was successfully added to the system"
+    res.json({
+      "message":req.body.productName + " was successfully added to the system"});
   });	}
 	else{
-	res.send({
+	res.json({
       "message":"The input you provided is not valid"});
 		}   });	} } 
 	//fixed
 	else{
-		res.send({
+		res.json({
       "message":"You must be an admin to perform this action"
 	        }); } });
 	}
 	else{
-	res.send({
+	res.json({
      "message":"You are not currently logged in"}); 
 }  
 });
@@ -290,7 +291,7 @@ app.post('/modifyProduct', function (req, res) {
 	   groups: req.body.group
         };
 		if(!req.body.asin || !req.body.productName || !req.body.productDescription || !req.body.group){
-				res.send({
+				res.json({
 				"message":"The input you provided is not valid"});
 			 }
 	else{
@@ -299,7 +300,7 @@ app.post('/modifyProduct', function (req, res) {
 	connection.query('select * from products where asin=?',asin,function(err,row){   //demon
 		if(err){
 			//console.log(err);
-		res.send({
+		res.json({
 		"failed":"error ocurred"})
 		}
 //		console.log('Length'+row.length);
@@ -308,19 +309,19 @@ app.post('/modifyProduct', function (req, res) {
 	connection.query('UPDATE products SET ? where asin=?',[info,asin],function(error,results) {
 
 		var msg = req.body.productName + " was successfully updated"
-    res.send({
-      "message ":msg});
+    res.json({
+      "message":msg});
   });	} 
 			else{
-		res.send({
+		res.json({
       "message":"The input you provided is not valid"});
 		}   });	} } 
 	else{
-		res.send({
+		res.json({
       "message":"You must be an admin to perform this action"});
 	 } }); }
 	else{
-	res.send({
+	res.json({
      "message":"You are not currently logged in"}); 
 }  });
 
@@ -337,17 +338,17 @@ app.post('/viewUsers', function (req, res) {
 		if(!fname && !lname){	
 		connection.query('SELECT fname,lname,username FROM users',function(err,rows){
 			if(err){
-		res.send({
+		res.json({
        "failed":"error ocurred"});
 	   
 		}
 		if(!rows.length){
-		res.send({
-		"message ": "There are no users that match that criteria"});
+		res.json({
+		"message": "There are no users that match that criteria"});
 		}	
 		else{
-			 res.send({
-		"message ": "The action was successful",
+			 res.json({
+		"message": "The action was successful",
 		"user": rows });
 		}  //adhu
 		});
@@ -358,11 +359,11 @@ app.post('/viewUsers', function (req, res) {
 			
 		if(err){
 		//console.log(err);
-		res.send({
+		res.json({
        "failed":"error ocurred lavy"});
 		}
-		res.send({
-		"message ": "The action was successful",
+		res.json({
+		"message": "The action was successful",
 		"user": rows });
 		}); 
 		}
@@ -374,18 +375,18 @@ app.post('/viewUsers', function (req, res) {
 		if(fname || lname){	
 		connection.query('SELECT fname,lname,username FROM users where fname LIKE ? and lname LIKE ?',[filfname,fillname],function(err,rows){
 			if(err){
-		res.send({
+		res.json({
        "failed":"error ocurred"});
 	   
 		}
 		if(!rows.length){
-		res.send({
-		"message ": "There are no users that match that criteria"});
+		res.json({
+		"message": "There are no users that match that criteria"});
 		}	
 		else{
-			 //res.send(rows);} //adhu
-			 res.send({
-		"message ": "The action was successful",
+			 //res.json(rows);} //adhu
+			 res.json({
+		"message": "The action was successful",
 		"user": rows });}
 		});
 		}	
@@ -395,11 +396,11 @@ app.post('/viewUsers', function (req, res) {
 			
 		if(err){
 		//console.log(err);
-		res.send({
+		res.json({
        "failed":"error ocurred lavy"});
 		}
-		res.send({
-		"message ": "The action was successful",
+		res.json({
+		"message": "The action was successful",
 		"user": rows });
 		}); 
 		}
@@ -412,21 +413,21 @@ app.post('/viewUsers', function (req, res) {
 			
 		if(err){
 			//console.log(err);
-		res.send({
+		res.json({
        "failed":"error ocurred lavy"});
 		}
-		res.send({
-		"message ": "The action was successful",
+		res.json({
+		"message": "The action was successful",
 		"user": rows });
 		});}
 		}
 	else{
-		res.send({
+		res.json({
       "message":"You must be an admin to perform this action"}); 
 	  } 
 }); }
 	else{
-	res.send({
+	res.json({
      "message":"You are not currently logged in"}); 
 } });
 
@@ -444,40 +445,39 @@ app.post('/viewProducts', function (req, res) {
 		filgroups ="%" + groups + "%";
 		
 		if(asin){
-		connection.query('SELECT * FROM products where asin=?',asin,function(err,rows){
+		connection.query('SELECT asin,productName FROM products where asin=?',asin,function(err,rows){
 			if(err){
-		res.send({
+		res.json({
        "failed":"error ocurred"});
 		}
 	//console.log(rows.length);
 		if(rows.length){
-		res.send({
-		"message ": "The action was successful",
-		"user": rows });
+			console.log(rows);
+		res.json({
+		"product":rows });
 		}
 		});
 		}
 		
 		if(!asin){
-		connection.query('SELECT * FROM products where asin LIKE ? and (productName LIKE ? or productDescription LIKE ?) and groups LIKE ?',[filasin,filkeyword,filkeyword,filgroups],function(err,rows){
+		connection.query('SELECT asin,productName FROM products where asin LIKE ? and (productName LIKE ? or productDescription LIKE ?) and groups LIKE ?',[filasin,filkeyword,filkeyword,filgroups],function(err,rows){
 		if(err){
-		res.send({
+		res.json({
        "failed":"error ocurred"});
 		}
 	
 		if(rows.length){
-		res.send({
-		"message ": "The action was successful",
-		"user": rows });
+			console.log(rows);
+		res.json({
+		"product":rows });
 		}	
 		
 		else{
-		res.send({			
-		"message ": "There are no users that match that criteria"});
+		res.json({			
+		"message":"There are no users that match that criteria"});
 		}
 		});
 		}
-		
 		});
 
 //logout 
