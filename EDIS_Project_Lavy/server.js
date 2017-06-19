@@ -1,5 +1,5 @@
 // server.js  //upload //lavy
-
+//19th June
 // setting up & getting all the tools we need
 var express  = require('express');
 var app      = express();
@@ -10,7 +10,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-var port     = process.env.PORT || 7000;
+var port     = process.env.PORT || 8080;
 var mysql = require('mysql');
 
 
@@ -35,11 +35,11 @@ app.use(bodyParser()); // get information from html forms
 //MYSQL DB CONFIG
 
 var connection = mysql.createConnection({
-  host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+  host     : 'localhost',
   port	   : '3306',
   user     : 'root',
-  password : 'lavanyar',
-  database : 'Project1_DB'
+  password : 'lavanya',
+  database : 'edis'
 });
 
 
@@ -64,7 +64,7 @@ app.post('/registerUser', function (req, res) {
 	   email: req.body.email,
        username: req.body.username,
 	   password: req.body.password,
-	   role:'customer' //added
+	   role:'customer'
         }
 		
 		if(!req.body.fname || !req.body.lname || !req.body.address || !req.body.city || !req.body.state || !req.body.zip ||  !req.body.email || !req.body.username || !req.body.password){
@@ -75,18 +75,18 @@ app.post('/registerUser', function (req, res) {
 		var username =req.body.username;
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
 		if(err){
-		//console.log("error ocurred",error);
+		console.log("error ocurred",error);
 		res.json({
       "failed":"error ocurred"
     })
 		}
 		
 		if(!rows.length){
-			//var msg = req.body.fname + " was registered successfully"; 
+			var msg = req.body.fname + "was registered successfully"; 
 	connection.query('INSERT INTO users SET ?',users, function (error, results) {
-		//console.log(req.body.fname + " was registered successfully");
+		//console.log(req.body.fname + "was registered successfully");
     res.json({
-       "message":req.body.fname + " was registered successfully" });
+       "message": req.body.fname + " was registered successfully" });
   });	
 }
 else{
@@ -96,7 +96,6 @@ else{
 	});
 		}
 		});
-
 
 //login
 app.post('/login', function(req,res) {
@@ -434,6 +433,8 @@ app.post('/viewUsers', function (req, res) {
 
 
 //viewProducts
+//change
+
 app.post('/viewProducts', function (req, res) {
 		    		
 		var asin =req.body.asin;
@@ -444,41 +445,23 @@ app.post('/viewProducts', function (req, res) {
 		filkeyword ="%" + keyword + "%"; 
 		filgroups ="%" + groups + "%";
 		
-		if(asin){
-		connection.query('SELECT asin,productName FROM products where asin=?',asin,function(err,rows){
-			if(err){
-		res.json({
-       "failed":"error ocurred"});
+		if(!asin) {
+		connection.query('SELECT asin,productName FROM products WHERE (productName like ? or productDescription like ?) and groups like ?',[filkeyword,filkeyword,filgroups],function(error,results,fields){
+		if(error || results.length <= 0){
+			return res.send({message: 'There are no products that match that criteria'});
 		}
-	//console.log(rows.length);
-		if(rows.length){
-			console.log(rows);
-		res.json({
-		"product":rows });
+		return res.send({product: results});
+		});	
+	}
+	if(asin) {
+		connection.query('SELECT asin,productName FROM products WHERE asin=?',[filasin],function(error,results,fields){
+		if(error || results.length <= 0){
+			return res.send({message: 'There are no products that match that criteria'});
 		}
+		return res.send({product: results});
 		});
-		}
-		
-		if(!asin){
-		connection.query('SELECT asin,productName FROM products where asin LIKE ? and (productName LIKE ? or productDescription LIKE ?) and groups LIKE ?',[filasin,filkeyword,filkeyword,filgroups],function(err,rows){
-		if(err){
-		res.json({
-       "failed":"error ocurred"});
-		}
-	
-		if(rows.length){
-			console.log(rows);
-		res.json({
-		"product":rows });
-		}	
-		
-		else{
-		res.json({			
-		"message":"There are no users that match that criteria"});
-		}
-		});
-		}
-		});
+	}
+});
 
 //logout 
 app.post('/logout', function(req, res) {
