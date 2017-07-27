@@ -525,15 +525,15 @@ app.post('/viewProducts', function (req, res) {
 		filgroups ="%" + groups + "%";
 		
 		if(asin) {
-			
+			var query ="SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('"+filkeyword+"')";
 			readpool.getConnection(function(err,connection){
-			connection.query('SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('"+?+"')',[filkeyword],function(error,results,fields){
+			connection.query(query,function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
 			});	});
-	}
+}
 	if(!asin) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(asin) against('"+filasin+"')',function(error,results,fields){
