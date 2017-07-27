@@ -1,5 +1,10 @@
 // server.js  //upload //lavy
+<<<<<<< HEAD
 //July 27
+=======
+//EDIT added to git
+//27 July
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
 
 // setting up & getting all the tools we need
 var express  = require('express');
@@ -14,9 +19,15 @@ var port     = process.env.PORT || 6000;
 
 
 //redis variable
+<<<<<<< HEAD
 /*var redis = require("redis");
 var redisStore = require('connect-redis')(session);
 var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', {no_ready_check: true});*/
+=======
+var redis = require("redis");
+var redisStore = require('connect-redis')(session);
+var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', {no_ready_check: true});
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
 
 
 //MYSQL DB CONFIG
@@ -31,6 +42,7 @@ var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws
 */
 
 var connection = mysql.createConnection({
+<<<<<<< HEAD
   host: 'localhost',
   //host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
   port	   : '3306',
@@ -38,6 +50,12 @@ var connection = mysql.createConnection({
   password: 'lavanya', //local
   password : 'lavanyar',
   database: 'edis',
+=======
+  host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+  port	   : '3306',
+  user     : 'root',
+  password : 'lavanyar',
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
   database : 'Project1_DB'
 });
 
@@ -45,6 +63,7 @@ var connection = mysql.createConnection({
 //mysql connection
 var readpool = mysql.createPool({
 	connectionLimit: 500,
+<<<<<<< HEAD
 	host: 'localhost',
 	//host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
@@ -54,11 +73,20 @@ var readpool = mysql.createPool({
 	database: 'edis',
 	//database: 'Project1_DB'
 	
+=======
+	//host: 'edissdb.cf94n1xe54ku.us-east-1.rds.amazonaws.com',
+	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+	port: '3306',
+	user: 'root',
+	password: 'lavanyar',
+	database: 'Project1_DB'
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
 });
 
 //mysql connection
 var writepool = mysql.createPool({
 	connectionLimit: 500,
+<<<<<<< HEAD
 	host: 'localhost',
 	//host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
@@ -67,6 +95,14 @@ var writepool = mysql.createPool({
 	//password: 'lavanyar',
 	database: 'edis',
 	//database: 'Project1_DB'
+=======
+	//host: 'edissdb.cf94n1xe54ku.us-east-1.rds.amazonaws.com',
+	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+	port: '3306',
+	user: 'root',
+	password: 'lavanyar',
+	database: 'Project1_DB'
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
 });
 
 //ending add pool
@@ -86,7 +122,11 @@ app.use(session({
  resave: true,
   rolling: true,
   //redis store
+<<<<<<< HEAD
 	//store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
+=======
+	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
+>>>>>>> c0dbe68182151a3ad95461b5361bc5e2c1bf6968
   saveUninitialized: false,
    cookie: { 
  expires:15*60*1000
