@@ -527,7 +527,7 @@ app.post('/viewProducts', function (req, res) {
 		if(asin) {
 			
 			readpool.getConnection(function(err,connection){
-			connection.query('SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('"+filkeyword+"') and match(groups) against('"+filgroups+"')',function(error,results,fields){
+			connection.query('SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('"+filkeyword+"')',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
