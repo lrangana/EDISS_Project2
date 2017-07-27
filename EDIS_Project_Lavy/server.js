@@ -535,8 +535,9 @@ app.post('/viewProducts', function (req, res) {
 			});	});
 }
 	if(!asin) {
+		var query ="SELECT asin,productName FROM products_r WHERE MATCH(asin) against('"+filasin+"')";
 		readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(asin) against('"+filasin+"')',function(error,results,fields){
+		connection.query(query,function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
