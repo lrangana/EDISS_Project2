@@ -525,8 +525,9 @@ app.post('/viewProducts', function (req, res) {
 		filgroups ="%" + groups + "%";
 		
 		if(asin) {
+			
 			readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products WHERE (productName like ? or productDescription like ?) and groups like ?',[filkeyword,filkeyword,filgroups],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products where MATCH(productName,productDescription) against ('+filkeyword+') and match(groups) against('+filgroups +')',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
@@ -535,7 +536,7 @@ app.post('/viewProducts', function (req, res) {
 	}
 	if(!asin) {
 		readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products WHERE asin=?',[filasin],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products WHERE MATCH(asin) against(+filasin+)',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
