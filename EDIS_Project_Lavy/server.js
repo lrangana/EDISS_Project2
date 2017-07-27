@@ -1,4 +1,5 @@
 // server.js  //upload //lavy
+//edit
 
 // setting up & getting all the tools we need
 var express  = require('express');
@@ -88,7 +89,7 @@ app.use(session({
 	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
   saveUninitialized: false,
    cookie: { 
- maxAge:15*60*1000
+ //maxAge:15*60*1000
   }
  
 }));
