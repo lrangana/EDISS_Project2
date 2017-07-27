@@ -312,7 +312,7 @@ app.post('/addProducts', function (req,res) {
 			var asin =req.body.asin;
 			
 			readpool.getConnection(function(err,connection){
-	connection.query('SELECT * FROM products where asin=?', asin,function(err,rows){
+	connection.query('SELECT * FROM products_r where asin=?', asin,function(err,rows){
 		//console.log(rows.length)
 		if(err){
 		res.json({
@@ -320,7 +320,7 @@ app.post('/addProducts', function (req,res) {
 		}
 		if(!rows.length){
 			writepool.getConnection(function(err,connection){
-	connection.query('INSERT INTO products SET ?',products, function (error, results) {
+	connection.query('INSERT INTO products_w SET ?',products, function (error, results) {
 	//	var msg = req.body.productName + " was successfully added to the system"
     res.json({
       "message":req.body.productName + " was successfully added to the system"});
@@ -364,7 +364,7 @@ app.post('/modifyProduct', function (req, res) {
 	var asin =req.body.asin;
 		//console.log('ASIN'+asin);	
 		readpool.getConnection(function(err,connection){
-	connection.query('select * from products where asin=?',asin,function(err,row){   //demon
+	connection.query('select * from products_r where asin=?',asin,function(err,row){   //demon
 		if(err){
 			//console.log(err);
 		res.json({
@@ -374,7 +374,7 @@ app.post('/modifyProduct', function (req, res) {
 		//console.log('ASIN'+asin);	
 		if(row.length>0){
 			writepool.getConnection(function(err,connection){
-	connection.query('UPDATE products SET ? where asin=?',[info,asin],function(error,results) {
+	connection.query('UPDATE products_w SET ? where asin=?',[info,asin],function(error,results) {
 
 		var msg = req.body.productName + " was successfully updated"
     res.json({
@@ -527,7 +527,7 @@ app.post('/viewProducts', function (req, res) {
 		if(asin) {
 			
 			readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products where MATCH(productName,productDescription) against ('+filkeyword+') and match(groups) against('+filgroups +')',function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('+filkeyword+') and match(groups) against('+filgroups +')',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
@@ -536,7 +536,7 @@ app.post('/viewProducts', function (req, res) {
 	}
 	if(!asin) {
 		readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products WHERE MATCH(asin) against(+filasin+)',function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(asin) against(+filasin+)',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
@@ -614,7 +614,7 @@ if(typeof name === 'undefined' || name == null)
 else if( name != "jadmin") 
 {   res.send('You must be an admin to perform this action');	}    
 readpool.getConnection(function(err,connection){
-connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
+connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products_r b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
 	{   
   	 if (!err && rows.length > 0 )
     {   
