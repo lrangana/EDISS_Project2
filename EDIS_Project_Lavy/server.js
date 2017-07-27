@@ -11,7 +11,7 @@ var mysql = require('mysql');
 
 
 //var port     = process.env.PORT || 8080;
-var port     = process.env.PORT || 7000;
+var port     = process.env.PORT || 6000;
 
 
 //redis variable
