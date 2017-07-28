@@ -534,7 +534,7 @@ app.post('/viewProducts', function (req, res) {
 		return res.json({product: results});
 			});	});
 }
-	if(!asin) {
+	if(!asin || asin === "undefined") {
 		var query ="SELECT asin,productName FROM products_r WHERE MATCH(asin) against('"+filasin+"')";
 		readpool.getConnection(function(err,connection){
 		connection.query(query,function(error,results,fields){
