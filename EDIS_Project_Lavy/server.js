@@ -514,77 +514,36 @@ app.post('/viewUsers', function (req, res) {
 
 
 //viewProducts
-app.post('/viewProducts', function (req,res){
-
-
-var asin = req.body.asin ;
-var group = req.body.group;
-var keyword = req.body.keyword;
-var querybuilder = "";
-if ( typeof asin == 'undefined' && typeof group == 'undefined' &&  typeof keyword == 'undefined')
-{
-	querybuilder = "select productName from products limit 1000";
-}
-else
-{
-	querybuilder = "select productName from products where ";
-if ( typeof asin != 'undefined')
-{
-  querybuilder = querybuilder + "(asin = '" + asin + "') or ";
-	
-}
-if ( typeof group != 'undefined')
-{
-  querybuilder = querybuilder + "(groups = '" + group + "') or ";
-}
-if ( typeof keyword != 'undefined')
-{
-
-keyword = keyword.trim();
-
-  querybuilder = querybuilder + "(match(productName,productDescrition) against('\"" + keyword + "\"')) or ";
-
-}
-querybuilder = querybuilder.substring(0,querybuilder.length - 3);	
-querybuilder = querybuilder + " limit 1000";
-}
-
-readpool.getConnection(function(err,connection){
-
-connection.query(querybuilder, function(err,result){
-	connection.release();
-if(!err)
-{
-	if(result.length != 0)
-	{
-
-
-	var finalResults = "product:[{asin:"
-                    for(var i=0;i<result.length;i++){
-                          if(i){
-                            finalResults += ',name:';
-                          }
-                     finalResults+=result[i]["productName"];
-                     finalResults += '}'
-                    }
-                    finalResults += ']'
-              //  }
-                    res.json(finalResults);
-
-}
-else
-{
-	//console.log(querybuilder);
-	res.json('There were no products in the system that met that criteria');
-}
-}
-else
-{
-	//console.log(err);
-	res.json('There was a problem with this action');
-}
-});
-});
+app.post('/viewProducts', function (req, res) {
+		    		
+		var asin =req.body.asin;
+		var keyword =req.body.keyword;
+		var groups = req.body.group;
+			
+		filasin = asin;
+		filkeyword =keyword; 
+		filgroups =groups;
+		
+		if(asin) {
+			readpool.getConnection(function(err,connection){
+		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[filasin],function(error,results,fields){
+		
+		if(error || results.length <= 0){
+			return res.json({message: 'There are no products that match that criteria'});
+		}
+		return res.json({product: results});
+			});	});
+	}
+	if(!asin) {
+		readpool.getConnection(function(err,connection){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (?) or groups like ?',[filkeyword,filgroups],function(error,results,fields){
+		if(error || results.length <= 0){
+			return res.json({message: 'There are no products that match that criteria'});
+		}
+		return res.json({product: results});
+		});
+		});
+	}
 });
 
 
