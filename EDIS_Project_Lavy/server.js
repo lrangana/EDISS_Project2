@@ -535,7 +535,7 @@ if ( typeof asin != 'undefined')
 }
 if ( typeof group != 'undefined')
 {
-  querybuilder = querybuilder + "(productgroup = '" + group + "') or ";
+  querybuilder = querybuilder + "(groups = '" + group + "') or ";
 }
 if ( typeof keyword != 'undefined')
 {
@@ -559,7 +559,7 @@ if(!err)
 	{
 
 
-	var finalResults = "product:[{productName:"
+	var finalResults = "product:[{asin:"
                     for(var i=0;i<result.length;i++){
                           if(i){
                             finalResults += ',name:';
