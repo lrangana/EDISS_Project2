@@ -520,9 +520,9 @@ app.post('/viewProducts', function (req, res) {
 		var keyword =req.body.keyword;
 		var groups = req.body.group;
 			
-		filasin = "%" + asin + "%";
-		filkeyword ="%" + keyword + "%"; 
-		filgroups ="%" + groups + "%";
+		filasin = asin;
+		filkeyword =keyword; 
+		filgroups =groups;
 		
 		if(asin) {
 			var query ="SELECT asin,productName FROM products_r where MATCH(productName,productDescription) against ('"+filkeyword+"')";
