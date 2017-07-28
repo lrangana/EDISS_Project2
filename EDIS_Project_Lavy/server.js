@@ -606,7 +606,7 @@ app.post('/buyProducts', function(req, res) {
 
 app.post( '/productsPurchased',  function(req, res, next) { 
 var name= req.session.user;
-var username = req.body.username;
+var user = req.body.username;
 
 if(typeof name === 'undefined' || name == null)
 {  res.json('You are not currently logged in');   }
@@ -614,7 +614,7 @@ if(typeof name === 'undefined' || name == null)
 else if( name != "jadmin") 
 {   res.json('You must be an admin to perform this action');	}    
 readpool.getConnection(function(err,connection){
-connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products_w b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
+connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products_w b where a.user =? and a.asin=b.asin group by a.asin',[user], function(err,rows)
 	{   
   	 if (!err && rows.length > 0 )
     {   
