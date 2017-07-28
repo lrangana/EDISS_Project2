@@ -518,7 +518,7 @@ app.post('/viewProducts', function (req,res){
 
 
 var asin = req.body.asin ;
-var group = req.body.categories;
+var group = req.body.group;
 var keyword = req.body.keyword;
 var querybuilder = "";
 if ( typeof asin == 'undefined' && typeof group == 'undefined' &&  typeof keyword == 'undefined')
@@ -559,7 +559,7 @@ if(!err)
 	{
 
 
-	var finalResults = "product_list:[{name:"
+	var finalResults = "product:[{productName:"
                     for(var i=0;i<result.length;i++){
                           if(i){
                             finalResults += ',name:';
@@ -569,19 +569,19 @@ if(!err)
                     }
                     finalResults += ']'
               //  }
-                    res.send(finalResults);
+                    res.json(finalResults);
 
 }
 else
 {
 	//console.log(querybuilder);
-	res.send('There were no products in the system that met that criteria');
+	res.json('There were no products in the system that met that criteria');
 }
 }
 else
 {
 	//console.log(err);
-	res.send('There was a problem with this action');
+	res.json('There was a problem with this action');
 }
 });
 });
@@ -650,10 +650,10 @@ var name= req.session.user;
 var username = req.body.username;
 
 if(typeof name === 'undefined' || name == null)
-{  res.send('You are not currently logged in');   }
+{  res.json('You are not currently logged in');   }
 
 else if( name != "jadmin") 
-{   res.send('You must be an admin to perform this action');	}    
+{   res.json('You must be an admin to perform this action');	}    
 readpool.getConnection(function(err,connection){
 connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products_r b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
 	{   
@@ -681,7 +681,7 @@ var name= req.session.user;
 var asin = req.body.asin;
 
 if(typeof name === 'undefined' || name == null)
-{  res.send('You are not currently logged in');   }
+{  res.json('You are not currently logged in');   }
 readpool.getConnection(function(err,connection){
 connection.query('select asin from  (select asin from purchaseHistory where orderid in (select DISTINCT orderid from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
 	if(error || results.length <= 0){
