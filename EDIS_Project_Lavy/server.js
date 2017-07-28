@@ -642,7 +642,7 @@ var asin = req.body.asin;
 if(typeof name === 'undefined' || name == null)
 {  res.json('You are not currently logged in');   }
 readpool.getConnection(function(err,connection){
-connection.query('select asin from  (select asin from purchaseHistory where orderid in (select DISTINCT orderid from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
+connection.query('select asin from  (select asin from purchaseHistory where orderId in (select DISTINCT orderId from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
