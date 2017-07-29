@@ -534,7 +534,7 @@ app.post('/viewProducts', function (req, res) {
 		return res.json({product: results});
 			});	});
 	}
-	if(!asin || groups || keyword) {
+	if(!asin) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (?) or groups=?',[filkeyword,filgroups],function(error,results,fields){
 		if(error || results.length <= 0){
@@ -544,6 +544,22 @@ app.post('/viewProducts', function (req, res) {
 		});
 		});
 	}
+	//lavy
+	
+	if(groups) {
+		readpool.getConnection(function(err,connection){
+		connection.query('SELECT asin,productName FROM products_r WHERE groups=?',[filgroups],function(error,results,fields){
+		if(error || results.length <= 0){
+			return res.json({message: 'There are no products that match that criteria'});
+		}
+		return res.json({product: results});
+		});
+		});
+	}
+	//lavy group
+	
+	
+	
 });
 
 
