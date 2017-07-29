@@ -534,7 +534,7 @@ app.post('/viewProducts', function (req, res) {
 		return res.json({product: results});
 			});	});
 	}
-	if(!asin) {
+	if(!asin || groups || keyword) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (?) or groups=?',[filkeyword,filgroups],function(error,results,fields){
 		if(error || results.length <= 0){
