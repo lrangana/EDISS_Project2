@@ -400,7 +400,9 @@ app.post('/modifyProduct', function (req, res) {
 			else{
 		res.json({
       "message":"The input you provided is not valid"});
-		}   }); });	} } 
+		}   });
+		//});//RP
+		} } 
 	else{
 		res.json({
       "message":"You must be an admin to perform this action"});
