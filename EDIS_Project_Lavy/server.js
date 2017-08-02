@@ -197,6 +197,7 @@ app.post('/login', function(req,res) {
 app.post('/updateInfo', function (req,res) {	
 	if(req.session && req.session.user){	
 var fusername = req.session.user;
+readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM users where username=?',fusername,function(err,rows){
 		connection.release();
 	   ofname = rows[0].fname;
@@ -290,6 +291,7 @@ else{
   
 	}); //con query
 	});//lavy
+});
 	}
 	else{
 		res.json({"message":"You are not currently logged in"});	
@@ -301,7 +303,8 @@ else{
 app.post('/addProducts', function (req,res) {
 		if(req.session && req.session.user)
 	{
-		var username = req.session.user
+		var username = req.session.user;
+		readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
 			connection.release();
 		if(rows[0].role == 'admin'){
@@ -343,6 +346,7 @@ app.post('/addProducts', function (req,res) {
 		res.json({
       "message":"You must be an admin to perform this action"
 	        }); } });
+		});
 	}
 	else{
 	res.json({
