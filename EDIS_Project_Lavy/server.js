@@ -44,7 +44,7 @@ var connection = mysql.createConnection({
 //adding pool
 //mysql connection
 var readpool = mysql.createPool({
-	connectionLimit: 400,
+	connectionLimit: 500,
 	//host: 'localhost',
 	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
@@ -58,7 +58,7 @@ var readpool = mysql.createPool({
 
 //mysql connection
 var writepool = mysql.createPool({
-	connectionLimit: 400,
+	connectionLimit: 500,
 	//host: 'localhost',
 	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
@@ -126,6 +126,7 @@ app.post('/registerUser', function (req, res) {
 		var username =req.body.username;
 		readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
+		connection.release();
 		if(err){
 		//console.log("error ocurred",error);
 		res.json({
@@ -137,6 +138,7 @@ app.post('/registerUser', function (req, res) {
 			//var msg = req.body.fname + " was registered successfully"; 
 			writepool.getConnection(function(err,connection){
 	connection.query('INSERT INTO users SET ?',users, function (error, results) {
+		connection.release();
 		//console.log(req.body.fname + " was registered successfully");
     res.json({
        "message":req.body.fname + " was registered successfully" });
@@ -163,6 +165,7 @@ app.post('/login', function(req,res) {
 	}
 	readpool.getConnection(function(err,connection){
 	connection.query(userid_sql,[username,password],function(err,results){
+		connection.release();
 	//console.log("result length"+ results.length);
 		var rlength = results.length
 				
@@ -195,6 +198,7 @@ app.post('/updateInfo', function (req,res) {
 	if(req.session && req.session.user){	
 var fusername = req.session.user;
 	connection.query('SELECT * FROM users where username=?',fusername,function(err,rows){
+		connection.release();
 	   ofname = rows[0].fname;
 	   olname = rows[0].lname;
 	   oaddress = rows[0].address;
@@ -220,6 +224,7 @@ var fusername = req.session.user;
 	   	   
 		   readpool.getConnection(function(err,connection){//lavy
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
+		connection.release();
 		if(err){
 		//console.log("error ocurred",error);
 		res.json({
@@ -271,6 +276,7 @@ else{
 	   
 	   writepool.getConnection(function(err,connection){//lavy
 	   connection.query('UPDATE users SET fname=?,lname=?,address=?,city=?,state=?,zip=?,email=?,username=?,password=? where username=?',[ofname,olname,oaddress,ocity,ostate,ozip,oemail,ousername,opassword,fusername], function (error, results) {
+		   connection.release();
 		   if (error) {
 		res.json({
       "failed":"error ocurred"}); }
@@ -297,6 +303,7 @@ app.post('/addProducts', function (req,res) {
 	{
 		var username = req.session.user
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
+			connection.release();
 		if(rows[0].role == 'admin'){
     var products = {
        asin: req.body.asin,
@@ -313,6 +320,7 @@ app.post('/addProducts', function (req,res) {
 			
 			readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM products_r where asin=?', asin,function(err,rows){
+		connection.release();
 		//console.log(rows.length)
 		if(err){
 		res.json({
@@ -321,6 +329,7 @@ app.post('/addProducts', function (req,res) {
 		if(!rows.length){
 			writepool.getConnection(function(err,connection){
 	connection.query('INSERT INTO products_w SET ?',products, function (error, results) {
+		connection.release();
 	//	var msg = req.body.productName + " was successfully added to the system"
     res.json({
       "message":req.body.productName + " was successfully added to the system"});
@@ -350,6 +359,7 @@ app.post('/modifyProduct', function (req, res) {
 		var username = req.session.user
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
+			connection.release();
 		if(rows[0].role == 'admin'){
  var info = {
 	   productName: req.body.productName,
@@ -365,6 +375,7 @@ app.post('/modifyProduct', function (req, res) {
 		//console.log('ASIN'+asin);	
 		readpool.getConnection(function(err,connection){
 	connection.query('select * from products_r where asin=?',asin,function(err,row){   //demon
+	connection.release();
 		if(err){
 			//console.log(err);
 		res.json({
@@ -375,6 +386,7 @@ app.post('/modifyProduct', function (req, res) {
 		if(row.length>0){
 			writepool.getConnection(function(err,connection){
 	connection.query('UPDATE products_w SET ? where asin=?',[info,asin],function(error,results) {
+		connection.release();
 
 		var msg = req.body.productName + " was successfully updated"
     res.json({
@@ -400,6 +412,7 @@ app.post('/viewUsers', function (req, res) {
 	{	var username = req.session.user
 	readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
+			connection.release();
 		if(rows[0].role == 'admin'){
 		var fname =req.body.fname;
 		var lname = req.body.lname;
@@ -407,6 +420,7 @@ app.post('/viewUsers', function (req, res) {
 		if(!fname && !lname){	
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users',function(err,rows){
+			connection.release();
 			if(err){
 		res.json({
        "failed":"error ocurred"});
@@ -428,7 +442,7 @@ app.post('/viewUsers', function (req, res) {
 		if(fname && lname){
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? and lname=?', [fname,lname],function(err,rows){
-			
+			connection.release();
 		if(err){
 		//console.log(err);
 		res.json({
@@ -448,6 +462,7 @@ app.post('/viewUsers', function (req, res) {
 		if(fname || lname){	
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname LIKE ? and lname LIKE ?',[filfname,fillname],function(err,rows){
+			connection.release();
 			if(err){
 		res.json({
        "failed":"error ocurred"});
@@ -469,7 +484,7 @@ app.post('/viewUsers', function (req, res) {
 		if(fname && lname){
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? and lname=?', [fname,lname],function(err,rows){
-			
+			connection.release();
 		if(err){
 		//console.log(err);
 		res.json({
@@ -488,7 +503,7 @@ app.post('/viewUsers', function (req, res) {
 		else{
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? or lname=?', [fname,lname],function(err,rows){
-			
+			connection.release();
 		if(err){
 			//console.log(err);
 		res.json({
@@ -527,7 +542,7 @@ app.post('/viewProducts', function (req, res) {
 		if(asin) {
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[filasin],function(error,results,fields){
-		
+		connection.release();
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
@@ -536,7 +551,10 @@ app.post('/viewProducts', function (req, res) {
 	}
 	if(!asin) {
 		readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (?) or groups=?',[filkeyword,filgroups],function(error,results,fields){
+			
+			MATCH(productName,productDescription) AGAINST ('\""+keyword_variable+"\"' IN BOOLEAN MODE)
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE) or groups=?',[filkeyword,filgroups],function(error,results,fields){
+			connection.release();
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
@@ -561,6 +579,7 @@ app.post('/buyProducts', function(req, res) {
 		var utcDate = new Date().getTime();
 		writepool.getConnection(function(err,connection){
 		connection.query('INSERT into orderDetails (user,purchaseTime) values (?,?)',[user,utcDate],function(error,results,fields){
+			connection.release();
 				if(error || results.length <= 0){
 					console.log("Error updating the order details");
 				}
@@ -568,6 +587,7 @@ app.post('/buyProducts', function(req, res) {
 				var orderID = 0;
 				readpool.getConnection(function(err,connection){
 				connection.query('SELECT orderID from orderDetails where user=? and purchaseTime=?',[user,utcDate],function(error, results, fields) {
+					connection.release();
 					if(error || results.length <= 0) {
 						console.log("No matching Order ID");
 					}
@@ -585,6 +605,7 @@ app.post('/buyProducts', function(req, res) {
 					var query = 'INSERT into purchaseHistory values ' + params;
 					writepool.getConnection(function(err,connection){
 					connection.query(query, function(error, resultss, fields) {
+						connection.release();
 						if(error) {
 							
 							return res.send({message: "There are no products that match that criteria"});
@@ -616,6 +637,7 @@ else if( name != "jadmin")
 readpool.getConnection(function(err,connection){
 connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products_r b where a.user =? and a.asin=b.asin group by a.asin',[user], function(err,rows)
 	{   
+	connection.release();
   	 if (!err && rows.length > 0 )
     {   
           var obj= '{"message":"The action was successful","products":[';    
@@ -643,6 +665,7 @@ if(typeof name === 'undefined' || name == null)
 {  res.json('You are not currently logged in');   }
 readpool.getConnection(function(err,connection){
 connection.query('select asin from  (select asin from purchaseHistory where orderID in (select DISTINCT orderID from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
+	connection.release();
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
