@@ -445,7 +445,7 @@ app.post('/viewUsers', function (req, res) {
 		"user": rows });
 		}  //adhu
 		});
-		});
+		//});//RP
 		}	
 		
 		if(fname && lname){
