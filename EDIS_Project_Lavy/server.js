@@ -449,7 +449,7 @@ app.post('/viewUsers', function (req, res) {
 		}	
 		
 		if(fname && lname){
-			//readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? and lname=?', [fname,lname],function(err,rows){
 			//connection.release();
 		if(err){
@@ -461,7 +461,7 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });
 		}); 
-			});
+			//});//RP
 		}
 		
 		//***************** lavdemon
