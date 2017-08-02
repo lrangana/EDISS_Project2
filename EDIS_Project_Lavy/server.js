@@ -303,8 +303,8 @@ else{
 app.post('/addProducts', function (req,res) {
 		if(req.session && req.session.user)
 	{
-		var username = req.session.user
-		readpool.getConnection(function(err,connection){
+		var username = req.session.user;
+		
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
 			connection.release();
 		if(rows[0].role == 'admin'){
@@ -346,7 +346,6 @@ app.post('/addProducts', function (req,res) {
 		res.json({
       "message":"You must be an admin to perform this action"
 	        }); } });
-		});
 	}
 	else{
 	res.json({
