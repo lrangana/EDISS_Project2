@@ -236,7 +236,7 @@ else{
        "message":"The input you provided is not valid"});
 }
 	});
-		   });//lavy
+		   //});//lavy
 	   } 
 	   
 	   if(ofname!=fname){
