@@ -64,7 +64,7 @@ app.use(session({
 //adding pool
 //mysql connection
 var readpool = mysql.createPool({
-	connectionLimit: 500,
+	connectionLimit: 1500,
 	//host: 'localhost',
 	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
@@ -78,7 +78,7 @@ var readpool = mysql.createPool({
 
 //mysql connection
 var writepool = mysql.createPool({
-	connectionLimit: 500,
+	connectionLimit: 1500,
 	//host: 'localhost',
 	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
 	port: '3306',
