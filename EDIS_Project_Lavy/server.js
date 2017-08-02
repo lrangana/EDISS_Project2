@@ -63,7 +63,7 @@ app.use(session({
 
 //adding pool
 //mysql connection
-var readpool = mysql.createPool({
+/*var readpool = mysql.createPool({
 	connectionLimit: 500,
 	//host: 'localhost',
 	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
@@ -88,14 +88,14 @@ var writepool = mysql.createPool({
 	//database: 'edis',
 	database: 'Project1_DB'
 });
-
-/*connection.connect(function(err){
+*/
+connection.connect(function(err){
 if(!err) {
     console.log("Database is connected");    
 } else {
     console.log("Error connecting database");    
 }
-});*/
+});
 
 
 //register
