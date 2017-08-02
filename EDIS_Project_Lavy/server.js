@@ -552,7 +552,7 @@ app.post('/viewProducts', function (req, res) {
 	if(!asin) {
 		readpool.getConnection(function(err,connection){
 			
-			MATCH(productName,productDescription) AGAINST ('\""+keyword_variable+"\"' IN BOOLEAN MODE)
+			//MATCH(productName,productDescription) AGAINST ('\""+keyword_variable+"\"' IN BOOLEAN MODE)
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE) or groups=?',[filkeyword,filgroups],function(error,results,fields){
 			connection.release();
 		if(error || results.length <= 0){
