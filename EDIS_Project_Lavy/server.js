@@ -30,6 +30,7 @@ var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws
 });
 */
 
+
 var connection = mysql.createConnection({
   //host: 'localhost',
   host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
@@ -89,7 +90,7 @@ app.use(session({
 	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
   saveUninitialized: false,
    cookie: { 
- //maxAge:15*60*1000
+ maxAge:15*60*1000
   }
  
 }));
