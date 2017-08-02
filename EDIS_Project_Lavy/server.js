@@ -42,33 +42,7 @@ var connection = mysql.createConnection({
   database : 'Project1_DB'
 });
 
-//adding pool
-//mysql connection
-var readpool = mysql.createPool({
-	connectionLimit: 500,
-	//host: 'localhost',
-	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
-	port: '3306',
-	user: 'root',
-	//password: 'lavanya', //local
-	password: 'lavanyar',
-	//database: 'edis',
-	database: 'Project1_DB'
-	
-});
 
-//mysql connection
-var writepool = mysql.createPool({
-	connectionLimit: 500,
-	//host: 'localhost',
-	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
-	port: '3306',
-	user: 'root',
-	//password: 'lavanya', //local
-	password: 'lavanyar',
-	//database: 'edis',
-	database: 'Project1_DB'
-});
 
 //ending add pool
 connection.connect(function(err){
@@ -101,6 +75,34 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser()); // get information from html forms
 
+
+//adding pool
+//mysql connection
+var readpool = mysql.createPool({
+	connectionLimit: 500,
+	//host: 'localhost',
+	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+	port: '3306',
+	user: 'root',
+	//password: 'lavanya', //local
+	password: 'lavanyar',
+	//database: 'edis',
+	database: 'Project1_DB'
+	
+});
+
+//mysql connection
+var writepool = mysql.createPool({
+	connectionLimit: 500,
+	//host: 'localhost',
+	host: 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
+	port: '3306',
+	user: 'root',
+	//password: 'lavanya', //local
+	password: 'lavanyar',
+	//database: 'edis',
+	database: 'Project1_DB'
+});
 
 
 
