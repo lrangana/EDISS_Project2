@@ -5,19 +5,38 @@
 var express  = require('express');
 var app      = express();
 var session      = require('express-session');
+var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var mysql = require('mysql');
 
-
 //var port     = process.env.PORT || 8080;
 var port     = process.env.PORT || 6000;
-
 
 //redis variable
 var redis = require("redis");
 var redisStore = require('connect-redis')(session);
 var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', {no_ready_check: true});
 
+
+app.use(cookieParser()); // read cookies (needed for auth)
+//body parser
+app.use(bodyParser()); // get information from html forms
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+
+//session mgmt
+app.use(session({
+  secret: 'squishysquashygoo',
+ resave: true,
+  rolling: true,
+  //redis store
+	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
+  saveUninitialized: false,
+   cookie: { 
+ maxAge:15*60*1000
+  }
+}));
 
 //MYSQL DB CONFIG
 
@@ -31,7 +50,7 @@ var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws
 */
 
 
-var connection = mysql.createConnection({
+/*var connection = mysql.createConnection({
   //host: 'localhost',
   host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
   port	   : '3306',
@@ -40,41 +59,7 @@ var connection = mysql.createConnection({
   password : 'lavanyar',
   //database: 'edis',
   database : 'Project1_DB'
-});
-
-
-
-//ending add pool
-connection.connect(function(err){
-if(!err) {
-    console.log("Database is connected");    
-} else {
-    console.log("Error connecting database");    
-}
-});
-
-//session mgmt
-
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(session({
-  secret: 'squishysquashygoo',
- resave: true,
-  rolling: true,
-  //redis store
-	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
-  saveUninitialized: false,
-   cookie: { 
- maxAge:15*60*1000
-  }
- 
-}));
-
-//body parser
-var bodyParser = require('body-parser');
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(bodyParser()); // get information from html forms
-
+});*/
 
 //adding pool
 //mysql connection
@@ -104,6 +89,13 @@ var writepool = mysql.createPool({
 	database: 'Project1_DB'
 });
 
+/*connection.connect(function(err){
+if(!err) {
+    console.log("Database is connected");    
+} else {
+    console.log("Error connecting database");    
+}
+});*/
 
 
 //register
