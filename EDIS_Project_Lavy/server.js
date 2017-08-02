@@ -521,9 +521,9 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
 		"message": "The action was successful",
 		"user": rows });
-		})
-			});
-			;}
+		});
+			//});//RP
+			}
 		}
 	else{
 		res.json({
