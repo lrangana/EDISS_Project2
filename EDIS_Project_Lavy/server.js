@@ -89,13 +89,13 @@ var writepool = mysql.createPool({
 	database: 'Project1_DB'
 });
 
-connection.connect(function(err){
+/*connection.connect(function(err){
 if(!err) {
     console.log("Database is connected");    
 } else {
     console.log("Error connecting database");    
 }
-});
+});*/
 
 
 //register
