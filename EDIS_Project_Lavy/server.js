@@ -615,7 +615,7 @@ app.post('/buyProducts', function(req, res) {
 					console.log("parameters" + params);
 					
 					var query = 'INSERT into purchaseHistory values ' + params;
-					writepool.getConnection(function(err,connection){
+					//writepool.getConnection(function(err,connection){
 					connection.query(query, function(error, resultss, fields) {
 						//connection.release();
 						if(error) {
