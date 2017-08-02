@@ -503,7 +503,7 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });
 		}); 
-			});
+			//});//RP
 		}
 		//*******************
 		
