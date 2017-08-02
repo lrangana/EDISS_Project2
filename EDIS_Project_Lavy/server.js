@@ -628,7 +628,7 @@ app.post('/buyProducts', function(req, res) {
 				});
 				});
 		//});//RP
-		});//WP
+		//});//WP
 	}
 	else {
 		return res.send({message: "You are not currently logged in"});
