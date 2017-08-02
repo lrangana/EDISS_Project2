@@ -50,7 +50,7 @@ app.use(session({
 */
 
 
-/*var connection = mysql.createConnection({
+var connection = mysql.createConnection({
   //host: 'localhost',
   host     : 'lavymysql.cnywgp1kyedu.us-east-1.rds.amazonaws.com',
   port	   : '3306',
@@ -59,7 +59,7 @@ app.use(session({
   password : 'lavanyar',
   //database: 'edis',
   database : 'Project1_DB'
-});*/
+});
 
 //adding pool
 //mysql connection
@@ -119,7 +119,7 @@ app.post('/registerUser', function (req, res) {
 		}
 		else{
 		var username =req.body.username;
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
 		connection.release();
 		if(err){
@@ -131,21 +131,21 @@ app.post('/registerUser', function (req, res) {
 		
 		if(!rows.length){
 			//var msg = req.body.fname + " was registered successfully"; 
-			writepool.getConnection(function(err,connection){
+			//writepool.getConnection(function(err,connection){
 	connection.query('INSERT INTO users SET ?',users, function (error, results) {
 		connection.release();
 		//console.log(req.body.fname + " was registered successfully");
     res.json({
        "message":req.body.fname + " was registered successfully" });
   });	
-			});
+			//});//WP
 }
 else{
 	res.json({
        "message":"The input you provided is not valid"});
 }
 	});
-		});
+		//});//RP
 		}
 		});
 
@@ -158,7 +158,7 @@ app.post('/login', function(req,res) {
 	if(!username || !password){
 		res.json({"message":"There seems to be an issue with the username/password combination that you entered"});
 	}
-	readpool.getConnection(function(err,connection){
+	//readpool.getConnection(function(err,connection){
 	connection.query(userid_sql,[username,password],function(err,results){
 		connection.release();
 	//console.log("result length"+ results.length);
@@ -183,7 +183,7 @@ app.post('/login', function(req,res) {
 		   
 	}
 });
-});
+//});//RP
 });
 
 
@@ -192,7 +192,7 @@ app.post('/login', function(req,res) {
 app.post('/updateInfo', function (req,res) {	
 	if(req.session && req.session.user){	
 var fusername = req.session.user;
-readpool.getConnection(function(err,connection){
+//readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM users where username=?',fusername,function(err,rows){
 		connection.release();
 	   ofname = rows[0].fname;
@@ -218,7 +218,7 @@ readpool.getConnection(function(err,connection){
 	   
 	   if(ousername!=username){
 	   	   
-		   readpool.getConnection(function(err,connection){//lavy
+		   //readpool.getConnection(function(err,connection){//lavy
 	connection.query('SELECT * FROM users where username=?', username,function(err,rows){
 		connection.release();
 		if(err){
@@ -270,7 +270,7 @@ else{
 	   }
 	  
 	   
-	   writepool.getConnection(function(err,connection){//lavy
+	   //writepool.getConnection(function(err,connection){//lavy
 	   connection.query('UPDATE users SET fname=?,lname=?,address=?,city=?,state=?,zip=?,email=?,username=?,password=? where username=?',[ofname,olname,oaddress,ocity,ostate,ozip,oemail,ousername,opassword,fusername], function (error, results) {
 		   connection.release();
 		   if (error) {
@@ -284,9 +284,9 @@ else{
 			}
 	   });//2nd con query
   
-	}); //con query
+	//}); //WP
 	});//lavy
-});
+//});//RP
 	}
 	else{
 		res.json({"message":"You are not currently logged in"});	
@@ -299,7 +299,7 @@ app.post('/addProducts', function (req,res) {
 		if(req.session && req.session.user)
 	{
 		var username = req.session.user;
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
 			connection.release();
 		if(rows[0].role == 'admin'){
@@ -316,7 +316,7 @@ app.post('/addProducts', function (req,res) {
 			else{
 			var asin =req.body.asin;
 			
-			readpool.getConnection(function(err,connection){
+			//readpool.getConnection(function(err,connection){
 	connection.query('SELECT * FROM products_r where asin=?', asin,function(err,rows){
 		connection.release();
 		//console.log(rows.length)
@@ -325,13 +325,15 @@ app.post('/addProducts', function (req,res) {
       "failed":"error ocurred"})
 		}
 		if(!rows.length){
-			writepool.getConnection(function(err,connection){
+			//writepool.getConnection(function(err,connection){
 	connection.query('INSERT INTO products_w SET ?',products, function (error, results) {
 		connection.release();
 	//	var msg = req.body.productName + " was successfully added to the system"
     res.json({
       "message":req.body.productName + " was successfully added to the system"});
-			}); });	}
+			}); 
+			//});	//WP
+			}
 	else{
 	res.json({
       "message":"The input you provided is not valid"});
@@ -341,7 +343,7 @@ app.post('/addProducts', function (req,res) {
 		res.json({
       "message":"You must be an admin to perform this action"
 	        }); } });
-		});
+	//	});//RP
 	}
 	else{
 	res.json({
@@ -356,7 +358,7 @@ app.post('/modifyProduct', function (req, res) {
 		if(req.session && req.session.user)
 	{
 		var username = req.session.user
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
 			connection.release();
 		if(rows[0].role == 'admin'){
@@ -372,7 +374,7 @@ app.post('/modifyProduct', function (req, res) {
 	else{
 	var asin =req.body.asin;
 		//console.log('ASIN'+asin);	
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 	connection.query('select * from products_r where asin=?',asin,function(err,row){   //demon
 	connection.release();
 		if(err){
@@ -383,14 +385,16 @@ app.post('/modifyProduct', function (req, res) {
 //		console.log('Length'+row.length);
 		//console.log('ASIN'+asin);	
 		if(row.length>0){
-			writepool.getConnection(function(err,connection){
+			//writepool.getConnection(function(err,connection){
 	connection.query('UPDATE products_w SET ? where asin=?',[info,asin],function(error,results) {
 		connection.release();
 
 		var msg = req.body.productName + " was successfully updated"
     res.json({
       "message":msg});
-			});	});} 
+			});	
+			//});//WP
+			} 
 			else{
 		res.json({
       "message":"The input you provided is not valid"});
@@ -398,7 +402,9 @@ app.post('/modifyProduct', function (req, res) {
 	else{
 		res.json({
       "message":"You must be an admin to perform this action"});
-		} }); }); }
+		} }); 
+		//}); //RP
+		}
 	else{
 	res.json({
      "message":"You are not currently logged in"}); 
@@ -409,7 +415,7 @@ app.post('/modifyProduct', function (req, res) {
 app.post('/viewUsers', function (req, res) {
 		if(req.session && req.session.user)
 	{	var username = req.session.user
-	readpool.getConnection(function(err,connection){
+	//readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
 			connection.release();
 		if(rows[0].role == 'admin'){
@@ -417,7 +423,7 @@ app.post('/viewUsers', function (req, res) {
 		var lname = req.body.lname;
 		
 		if(!fname && !lname){	
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users',function(err,rows){
 			connection.release();
 			if(err){
@@ -439,7 +445,7 @@ app.post('/viewUsers', function (req, res) {
 		}	
 		
 		if(fname && lname){
-			readpool.getConnection(function(err,connection){
+			//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? and lname=?', [fname,lname],function(err,rows){
 			connection.release();
 		if(err){
@@ -459,7 +465,7 @@ app.post('/viewUsers', function (req, res) {
 		fillname = "%" + lname + "%";
 		
 		if(fname || lname){	
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname LIKE ? and lname LIKE ?',[filfname,fillname],function(err,rows){
 			connection.release();
 			if(err){
@@ -481,7 +487,7 @@ app.post('/viewUsers', function (req, res) {
 		}	
 		
 		if(fname && lname){
-			readpool.getConnection(function(err,connection){
+			//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? and lname=?', [fname,lname],function(err,rows){
 			connection.release();
 		if(err){
@@ -500,7 +506,7 @@ app.post('/viewUsers', function (req, res) {
 		
 			
 		else{
-			readpool.getConnection(function(err,connection){
+			//readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? or lname=?', [fname,lname],function(err,rows){
 			connection.release();
 		if(err){
@@ -519,7 +525,9 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
       "message":"You must be an admin to perform this action"}); 
 	  } 
-	});  });}
+	});  
+	//});//RP
+	}
 	else{
 	res.json({
      "message":"You are not currently logged in"}); 
@@ -539,17 +547,18 @@ app.post('/viewProducts', function (req, res) {
 		filgroups =groups;
 		
 		if(asin) {
-			readpool.getConnection(function(err,connection){
+			//readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[filasin],function(error,results,fields){
 		connection.release();
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-			});	});
+			});	
+			//});//RP
 	}
 	if(!asin) {
-		readpool.getConnection(function(err,connection){
+		//readpool.getConnection(function(err,connection){
 			
 			//MATCH(productName,productDescription) AGAINST ('\""+keyword_variable+"\"' IN BOOLEAN MODE)
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE) or groups=?',[filkeyword,filgroups],function(error,results,fields){
@@ -559,7 +568,7 @@ app.post('/viewProducts', function (req, res) {
 		}
 		return res.json({product: results});
 		});
-		});
+		//});//RP
 	}
 	});
 
@@ -576,7 +585,7 @@ app.post('/buyProducts', function(req, res) {
 		console.log("List Of Product IDs" + ListOfProductIds);
 		
 		var utcDate = new Date().getTime();
-		writepool.getConnection(function(err,connection){
+		//writepool.getConnection(function(err,connection){
 		connection.query('INSERT into orderDetails (user,purchaseTime) values (?,?)',[user,utcDate],function(error,results,fields){
 			connection.release();
 				if(error || results.length <= 0){
@@ -584,7 +593,7 @@ app.post('/buyProducts', function(req, res) {
 				}
 				console.log("Order details inserted successfully");
 				var orderID = 0;
-				readpool.getConnection(function(err,connection){
+				//readpool.getConnection(function(err,connection){
 				connection.query('SELECT orderID from orderDetails where user=? and purchaseTime=?',[user,utcDate],function(error, results, fields) {
 					connection.release();
 					if(error || results.length <= 0) {
@@ -602,7 +611,7 @@ app.post('/buyProducts', function(req, res) {
 					console.log("parameters" + params);
 					
 					var query = 'INSERT into purchaseHistory values ' + params;
-					writepool.getConnection(function(err,connection){
+					//writepool.getConnection(function(err,connection){
 					connection.query(query, function(error, resultss, fields) {
 						connection.release();
 						if(error) {
@@ -613,9 +622,9 @@ app.post('/buyProducts', function(req, res) {
 					});
 					});
 				});
-				});
+				//});//RP
 		});
-		});
+		//});//WP
 	}
 	else {
 		return res.send({message: "You are not currently logged in"});
@@ -633,7 +642,7 @@ if(typeof name === 'undefined' || name == null)
 
 else if( name != "jadmin") 
 {   res.json('You must be an admin to perform this action');	}    
-readpool.getConnection(function(err,connection){
+//readpool.getConnection(function(err,connection){
 connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products_r b where a.user =? and a.asin=b.asin group by a.asin',[user], function(err,rows)
 	{   
 	connection.release();
@@ -651,7 +660,8 @@ connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty fr
           return res.send(obj);
     }
    else {res.send('There are no users that match that criteria');	  }   
-}); });
+}); 
+//});//RP
 (req,res,next);
 });
 
@@ -662,14 +672,15 @@ var asin = req.body.asin;
 
 if(typeof name === 'undefined' || name == null)
 {  res.json('You are not currently logged in');   }
-readpool.getConnection(function(err,connection){
+////readpool.getConnection(function(err,connection){
 connection.query('select asin from  (select asin from purchaseHistory where orderID in (select DISTINCT orderID from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
 	connection.release();
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
 		return res.json({message: 'The action was successful',product: results});
-}); })
+}); 
+//})//readpool
 });
 
 //logout 
