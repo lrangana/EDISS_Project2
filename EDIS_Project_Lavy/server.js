@@ -10,7 +10,7 @@ var cookieParser = require('cookie-parser');
 var mysql = require('mysql');
 
 //var port     = process.env.PORT || 8080;
-var port     = process.env.PORT || 7000;
+var port     = process.env.PORT || 9000;
 
 //redis variable
 var redis = require("redis");
