@@ -690,8 +690,10 @@ app.post('/buyProducts', function(req, res) {
 						}
 						return res.send({message: "The action was successful"});
 					});
+					connection.release();//next
 					});
 				});
+				connection.release();//next
 				});
 		});
 		connection.release();//next
