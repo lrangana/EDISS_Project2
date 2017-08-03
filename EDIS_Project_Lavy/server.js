@@ -550,7 +550,7 @@ app.post('/viewProducts', function (req, res) {
 		
 		if(asin && !keyword && !groups) {
 			readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[filasin],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(asin) against (? IN BOOLEAN MODE)',[filasin],function(error,results,fields){
 		//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
@@ -559,6 +559,19 @@ app.post('/viewProducts', function (req, res) {
 			});	
 			connection.release();//next
 			});
+	}
+	
+	if(keyword) {
+		readpool.getConnection(function(err,connection){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE)',[filkeyword],function(error,results,fields){
+			//connection.release(); //previous
+		if(error || results.length <= 0){
+			return res.json({message: 'There are no products that match that criteria'});
+		}
+		return res.json({product: results});
+		});
+		connection.release();//next
+		});
 	}
 	
 	if(asin && keyword) {
@@ -605,19 +618,6 @@ app.post('/viewProducts', function (req, res) {
 	if(!asin && keyword && groups) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE) AND groups=?',[filkeyword,filgroups],function(error,results,fields){
-			//connection.release(); //previous
-		if(error || results.length <= 0){
-			return res.json({message: 'There are no products that match that criteria'});
-		}
-		return res.json({product: results});
-		});
-		connection.release();//next
-		});
-	}
-	
-	if(!asin && keyword) {
-		readpool.getConnection(function(err,connection){
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE)',[filkeyword],function(error,results,fields){
 			//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
