@@ -590,7 +590,6 @@ app.post('/viewProducts', function (req, res) {
 			});	
 			connection.release();
 			});
-	});
 	}
 	
 	if(asin && keyword && groups) {
