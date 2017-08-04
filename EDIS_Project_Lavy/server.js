@@ -138,6 +138,7 @@ app.post('/registerUser', function (req, res) {
     res.json({
        "message":req.body.fname + " was registered successfully" });
   });	
+  connection.release();
 			});
 }
 else{
@@ -239,6 +240,7 @@ else{
        "message":"The input you provided is not valid"});
 }
 	});
+	connection.release();
 		   });//lavy
 	   } 
 	   
@@ -286,10 +288,9 @@ else{
 			"success":msg });
 			}
 	   });//2nd con query
-  
+  connection.release();
 	}); //con query
 	});//lavy
-	connection.release();//next
 });
 	}
 	else{
@@ -339,7 +340,9 @@ app.post('/addProducts', function (req,res) {
 	else{
 	res.json({
       "message":"The input you provided is not valid"});
-			}   }); });	} } 
+			}   });
+connection.release();
+			});	} } 
 	//fixed
 	else{
 		res.json({
@@ -400,7 +403,9 @@ app.post('/modifyProduct', function (req, res) {
 			else{
 		res.json({
       "message":"The input you provided is not valid"});
-		}   }); });	} } 
+		}   }); 
+		connection.release();
+		});	} } 
 	else{
 		res.json({
       "message":"You must be an admin to perform this action"});
@@ -443,6 +448,7 @@ app.post('/viewUsers', function (req, res) {
 		"user": rows });
 		}  //adhu
 		});
+		connection.release();
 		});
 		}	
 		
@@ -459,6 +465,7 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });
 		}); 
+		connection.release();
 			});
 		}
 		
@@ -485,6 +492,7 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });}
 		});
+		connection.release();
 		});
 		}	
 		
@@ -501,6 +509,7 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });
 		}); 
+		connection.release();
 			});
 		}
 		//*******************
@@ -519,9 +528,10 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
 		"message": "The action was successful",
 		"user": rows });
-		})
+		});
+		connection.release();
 			});
-			;}
+			}
 		}
 	else{
 		res.json({
@@ -597,8 +607,8 @@ app.post('/viewProducts', function (req, res) {
 		}
 		return res.json({product: results});
 			});	
-			connection.release();//next
 			});
+			connection.release();
 	});
 	}
 	
