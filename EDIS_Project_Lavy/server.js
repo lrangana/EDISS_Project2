@@ -675,7 +675,7 @@ if(typeof name === 'undefined' || name == null)
 else if( name != "jadmin") 
 {   res.send('You must be an admin to perform this action');	}    
 
-connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
+connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products_r b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
 	{   
   	 if (!err && rows.length > 0 )
     {   
