@@ -19,7 +19,6 @@ var client = redis.createClient(6379, 'redis-v2.gtjqw1.0001.use1.cache.amazonaws
 
 
 app.use(cookieParser()); // read cookies (needed for auth)
-//body parser
 app.use(bodyParser()); // get information from html forms
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -133,16 +132,18 @@ app.post('/registerUser', function (req, res) {
 	connection.query('INSERT INTO users SET ?',users, function (error, results) {
     res.json({
        "message":req.body.fname + " was registered successfully" });
+   connection.release();
   });	
-  connection.release();
+ 
 			});
 }
 else{
 	res.json({
        "message":"The input you provided is not valid"});
 }
+connection.release();
 	});
-	connection.release();
+	
 	
 		});
 		}
@@ -179,8 +180,8 @@ app.post('/login', function(req,res) {
 		res.json({"message":msg});    
 		   
 	}
+	connection.release();//next
 });
-connection.release();//next
 });
 });
 
@@ -231,9 +232,9 @@ else{
 	res.json({
        "message":"The input you provided is not valid"});
 }
+connection.release();
 	});
-	connection.release();
-		   });//lavy
+	   });//lavy
 	   } 
 	   
 	   if(ofname!=fname){
@@ -278,11 +279,13 @@ else{
 		res.json({
 			"success":msg });
 			}
+	   connection.release();
 	   });//2nd con query
-  connection.release();
+  
 	}); //con query
-	});//lavy
 	connection.release();
+	});//lavy
+	
 });
 	}
 	else{
@@ -323,22 +326,25 @@ app.post('/addProducts', function (req,res) {
 	connection.query('INSERT INTO products_w SET ?',products, function (error, results) {
     res.json({
       "message":req.body.productName + " was successfully added to the system"});
+			connection.release();
 			});
-connection.release();
+
 			});	}
 	else{
 	res.json({
       "message":"The input you provided is not valid"});
-			}   });
-connection.release();
+			}  
+			connection.release();
+			});
 			});	} } 
 	//fixed
 	else{
 		res.json({
       "message":"You must be an admin to perform this action"
 	        }); } 
-			});
 			connection.release();//next
+			});
+			
 		});
 	}
 	else{
@@ -384,20 +390,24 @@ app.post('/modifyProduct', function (req, res) {
 		var msg = req.body.productName + " was successfully updated"
     res.json({
       "message":msg});
-			});
 connection.release();
+	  });
+
 			});} 
 			else{
 		res.json({
       "message":"The input you provided is not valid"});
-		}   }); 
-		connection.release();
+		}
+connection.release();		}); 
+		
 		});	} } 
 	else{
 		res.json({
       "message":"You must be an admin to perform this action"});
-		} }); 
+		} 
 		connection.release();//next
+		}); 
+		
 		}); }
 	else{
 	res.json({
@@ -411,7 +421,6 @@ app.post('/viewUsers', function (req, res) {
 	{	var username = req.session.user
 	readpool.getConnection(function(err,connection){
 		connection.query('SELECT role FROM users where username=?', username,function(err,rows){
-			//connection.release(); //previous
 		if(rows[0].role == 'admin'){
 		var fname =req.body.fname;
 		var lname = req.body.lname;
@@ -433,8 +442,9 @@ app.post('/viewUsers', function (req, res) {
 		"message": "The action was successful",
 		"user": rows });
 		}  //adhu
-		});
 		connection.release();
+		});
+		
 		});
 		}	
 		
@@ -449,8 +459,9 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
 		"message": "The action was successful",
 		"user": rows });
-		}); 
 		connection.release();
+		}); 
+		
 			});
 		}
 		
@@ -475,8 +486,9 @@ app.post('/viewUsers', function (req, res) {
 			 res.json({
 		"message": "The action was successful",
 		"user": rows });}
-		});
 		connection.release();
+		});
+		
 		});
 		}	
 		
@@ -491,8 +503,8 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
 		"message": "The action was successful",
 		"user": rows });
-		}); 
 		connection.release();
+		}); 
 			});
 		}
 		//*******************
@@ -502,7 +514,6 @@ app.post('/viewUsers', function (req, res) {
 		else{
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT fname,lname,username FROM users where fname=? or lname=?', [fname,lname],function(err,rows){
-			//connection.release(); //previous
 		if(err){
 			//console.log(err);
 		res.json({
@@ -511,8 +522,8 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
 		"message": "The action was successful",
 		"user": rows });
-		});
 		connection.release();
+		});
 			});
 			}
 		}
@@ -520,8 +531,9 @@ app.post('/viewUsers', function (req, res) {
 		res.json({
       "message":"You must be an admin to perform this action"}); 
 	  } 
+	  connection.release();//next
 	}); 
-connection.release();//next
+
 	});}
 	else{
 	res.json({
@@ -544,39 +556,36 @@ app.post('/viewProducts', function (req, res) {
 		if(asin && !keyword && !groups) {
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(asin) against (? IN BOOLEAN MODE)',[filasin],function(error,results,fields){
-		//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
+				connection.release();//next
 			});	
-			connection.release();//next
 			});
 	}
 	
 	if(keyword) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE)',[filkeyword],function(error,results,fields){
-			//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-		});
 		connection.release();//next
+		});
 		});
 	}
 	
 	if(asin && keyword) {
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE asin=? AND MATCH(productName,productDescription) against (? IN BOOLEAN MODE)',[filasin,filkeyword],function(error,results,fields){
-		//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-			});	
 			connection.release();//next
+			});	
 			});
 	}
 	
@@ -587,47 +596,44 @@ app.post('/viewProducts', function (req, res) {
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-			});	
 			connection.release();
+			});	
 			});
 	}
 	
 	if(asin && keyword && groups) {
 			readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE asin = ? AND MATCH(productName,productDescription) against (? IN BOOLEAN MODE) AND groups=?',[filasin,filkeyword,filgroups],function(error,results,fields){
-		//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-			});	
 			connection.release();//next
+			});	
 			});
 	}
 	
 	if(!asin && keyword && groups) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName,productDescription) against (? IN BOOLEAN MODE) AND groups=?',[filkeyword,filgroups],function(error,results,fields){
-			//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-		});
 		connection.release();//next
+		});
 		});
 	}
 	
 	if(!asin && groups) {
 		readpool.getConnection(function(err,connection){
 		connection.query('SELECT asin,productName FROM products_r WHERE groups=?',[filgroups],function(error,results,fields){
-			//connection.release(); //previous
 		if(error || results.length <= 0){
 			return res.json({message: 'There are no products that match that criteria'});
 		}
 		return res.json({product: results});
-		});
 		connection.release();//next
+		});
 		});
 	}
 	});
@@ -647,7 +653,6 @@ app.post('/buyProducts', function(req, res) {
 		var utcDate = new Date().getTime();
 		writepool.getConnection(function(err,connection){
 		connection.query('INSERT into orderDetails (user,purchaseTime) values (?,?)',[user,utcDate],function(error,results,fields){
-			//connection.release(); //previous
 				if(error || results.length <= 0){
 					console.log("Error updating the order details");
 				}
@@ -679,14 +684,14 @@ app.post('/buyProducts', function(req, res) {
 							return res.send({message: "There are no products that match that criteria"});
 						}
 						return res.send({message: "The action was successful"});
-					});
 					connection.release();//next
 					});
+					});
+					connection.release();//next
 				});
-				connection.release();//next
 				});
-		});
 		connection.release();//next
+		});
 		});
 	}
 	else {
@@ -722,8 +727,9 @@ connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty fr
           return res.send(obj);
     }
    else {res.send('There are no users that match that criteria');	  }   
-}); 
 connection.release();//next
+   }); 
+
 });
 (req,res,next);
 });
@@ -737,13 +743,13 @@ if(typeof name === 'undefined' || name == null)
 {  res.json('You are not currently logged in');   }
 readpool.getConnection(function(err,connection){
 connection.query('select asin from  (select asin from purchaseHistory where orderID in (select DISTINCT orderID from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
-	//connection.release(); //previous
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
 		return res.json({message: 'The action was successful',product: results});
-}); 
 connection.release();//next
+		}); 
+
 })
 });
 
