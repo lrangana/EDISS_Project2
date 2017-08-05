@@ -516,7 +516,7 @@ app.post('/viewProducts', function(req,res) {
 	console.log(newString);
 	
 	if(asin && !keyword && !groups) {
-		mc.query('SELECT asin,productName FROM products_r WHERE asin=?',[asin],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[asin],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -524,7 +524,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(keyword && !asin && !groups) {
-		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[newString],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[newString],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -532,7 +532,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && keyword && !groups) {
-		mc.query('SELECT asin,productName FROM products_read WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_read WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -540,7 +540,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && groups && !keyword) {
-		mc.query('SELECT asin,productName FROM products_r WHERE asin=? and groups=?',[asin,groups],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE asin=? and groups=?',[asin,groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -548,7 +548,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && keyword && groups) {
-		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=?',[newString,groups],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=?',[newString,groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -556,7 +556,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && groups && !keyword) {
-		mc.query('SELECT asin,productName FROM products_r WHERE groups=?',[groups],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE groups=?',[groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -564,7 +564,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && !keyword && !groups) {
-		mc.query('SELECT asin,productName FROM products_r',function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -572,7 +572,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && keyword && groups) {
-		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=? and asin=?',[newString,groups,asin],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=? and asin=?',[newString,groups,asin],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
