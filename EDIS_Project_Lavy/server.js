@@ -80,10 +80,10 @@ app.use(session({
  resave: true,
   rolling: true,
   //redis store
-	//store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
+	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
   saveUninitialized: false,
    cookie: { 
- //expires:15*60*1000
+ expires:15*60*1000
   }
  
 }));
@@ -93,7 +93,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser()); // get information from html forms
-
 
 
 
@@ -676,7 +675,7 @@ if(typeof name === 'undefined' || name == null)
 else if( name != "jadmin") 
 {   res.send('You must be an admin to perform this action');	}    
 
-connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
+connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
 	{   
   	 if (!err && rows.length > 0 )
     {   
@@ -704,7 +703,7 @@ var asin = req.body.asin;
 if(typeof name === 'undefined' || name == null)
 {  res.send('You are not currently logged in');   }
 
-connection.query('select asin from  (select asin from purchaseHistory where orderid in (select DISTINCT orderid from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
+connection.query('select asin from  (select asin from purchaseHistory where orderID in (select DISTINCT orderID from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){	
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
