@@ -37,7 +37,6 @@ var connection = mysql.createConnection({
   password : 'lavanya',
   database : 'edis'
 });
-
 //adding pool
 //mysql connection
 var readpool = mysql.createPool({
@@ -49,7 +48,6 @@ var readpool = mysql.createPool({
 	password: 'lavanya',
 	database: 'edis'
 });
-
 //mysql connection
 var writepool = mysql.createPool({
 	connectionLimit: 500,
@@ -60,7 +58,6 @@ var writepool = mysql.createPool({
 	password: 'lavanya',
 	database: 'edis'
 });
-
 //ending add pool
 */
 
@@ -640,12 +637,10 @@ app.post('/buyProducts', function(req, res) {
 	console.log(name);
 	var values="";
     var total=0;
-
 if(typeof name === 'undefined' || name == null)
 {
     res.json({"message":"You are not currently logged in"}); 
 }
-
 else{
 	var products = req.body.products;
 	
