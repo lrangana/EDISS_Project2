@@ -529,7 +529,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && keyword && !groups) {
-		connection.query('SELECT asin,productName FROM products_read WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
+		connection.query('SELECT asin,productName FROM products_r WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
