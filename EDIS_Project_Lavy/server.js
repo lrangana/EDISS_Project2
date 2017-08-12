@@ -598,11 +598,11 @@ app.post('/buyProducts', function(req, res) {
 				}
 				console.log("Order details inserted successfully");
 				var orderID = 0;
-				connection.query('SELECT orderID from orderDetails where user=? and purchaseTime=?',[user,utcDate],function(error, results, fields) {
+				connection.query('SELECT orderid from orderDetails where user=? and purchaseTime=?',[user,utcDate],function(error, results, fields) {
 					if(error || results.length <= 0) {
 						console.log("No matching Order ID");
 					}
-					orderID = results[0].orderID;
+					orderID = results[0].orderid;
 					console.log("orderID " + orderID);
 					var params = "";
 					for(var i=0; i<ListOfProductIds.length; i++) {
