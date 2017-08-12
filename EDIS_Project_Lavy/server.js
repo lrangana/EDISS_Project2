@@ -10,7 +10,7 @@ var mysql = require('mysql');
 
 
 //var port     = process.env.PORT || 8080;
-var port     = process.env.PORT || 6001;
+var port     = process.env.PORT || 7000;
 
 
 //redis variable
@@ -77,10 +77,10 @@ app.use(session({
  resave: true,
   rolling: true,
   //redis store
-	store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
+	//store: new redisStore({ host: 'redis-v2.gtjqw1.0001.use1.cache.amazonaws.com', port: 6379, client: client,ttl :  260}),
   saveUninitialized: false,
    cookie: { 
- expires:15*60*1000
+ //expires:15*60*1000
   }
  
 }));
@@ -90,6 +90,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser()); // get information from html forms
+
 
 
 
@@ -513,7 +514,7 @@ app.post('/viewProducts', function(req,res) {
 	console.log(newString);
 	
 	if(asin && !keyword && !groups) {
-		connection.query('SELECT asin,productName FROM products_r WHERE asin=?',[asin],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE asin=?',[asin],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -521,7 +522,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(keyword && !asin && !groups) {
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[newString],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[newString],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -529,7 +530,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && keyword && !groups) {
-		connection.query('SELECT asin,productName FROM products_r WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_read WHERE asin=? and MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE)',[asin,newString],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -537,7 +538,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && groups && !keyword) {
-		connection.query('SELECT asin,productName FROM products_r WHERE asin=? and groups=?',[asin,groups],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE asin=? and groups=?',[asin,groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -545,7 +546,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && keyword && groups) {
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=?',[newString,groups],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=?',[newString,groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -553,7 +554,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && groups && !keyword) {
-		connection.query('SELECT asin,productName FROM products_r WHERE groups=?',[groups],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE groups=?',[groups],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -561,7 +562,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(!asin && !keyword && !groups) {
-		connection.query('SELECT asin,productName FROM products_r',function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r',function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -569,7 +570,7 @@ app.post('/viewProducts', function(req,res) {
 		});
 	}
 	if(asin && keyword && groups) {
-		connection.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=? and asin=?',[newString,groups,asin],function(error,results,fields){
+		mc.query('SELECT asin,productName FROM products_r WHERE MATCH(productName, productDescription) AGAINST (? IN BOOLEAN MODE) and groups=? and asin=?',[newString,groups,asin],function(error,results,fields){
 		if(error || results.length <= 0){
 			return res.send({message: 'There are no products that match that criteria'});
 		}
@@ -670,7 +671,7 @@ if(typeof name === 'undefined' || name == null)
 else if( name != "jadmin") 
 {   res.send('You must be an admin to perform this action');	}    
 
-connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from purchaseHistory a, products_r b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
+connection.query('SELECT b.productName as pname, a.asin, count(a.asin) as qty from edis.purchaseHistory a, edis.products b where a.user =? and a.asin=b.asin group by a.asin',[username], function(err,rows)
 	{   
   	 if (!err && rows.length > 0 )
     {   
@@ -698,7 +699,7 @@ var asin = req.body.asin;
 if(typeof name === 'undefined' || name == null)
 {  res.send('You are not currently logged in');   }
 
-connection.query('select asin from  (select asin from purchaseHistory where orderID in (select DISTINCT orderID from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){	
+connection.query('select asin from  (select asin from purchaseHistory where orderid in (select DISTINCT orderid from purchaseHistory where asin=?) and asin !=?) as temp group by asin order by count(asin) desc limit 5',[asin,asin],function(error,results){
 	if(error || results.length <= 0){
 			return res.json({message: 'There are no recommendation for that products'});
 		}
